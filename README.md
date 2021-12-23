@@ -1,13 +1,13 @@
 # stack-chan-tester
-スタックチャンを作成するときに、サーボのテストを行うためのアプリケーションです。<br>
+スタックチャンを作成するときに、サーボの調整及びテストを行うためのアプリケーションです。<br>
 stack-chan test application for pwm servo
 
 ※ ArduinoFrameworkのみです。
 
 # 使い方
-ボタンA： X軸、Y軸のサーボを90°に回転します。
-ボタンB： X軸は0〜180, Y軸は90〜50まで動きます。
-ボタンC： ランダムで動きます。
+- ボタンA： X軸、Y軸のサーボを90°に回転します。固定前に90°にするときに使用してください。
+- ボタンB： X軸は0〜180, Y軸は90〜50まで動きます。
+- ボタンC： ランダムで動きます。
 
 # 必要なライブラリ
 - [M5Stack-Avatar](https://github.com/meganetaaan/m5stack-avatar)
@@ -15,7 +15,7 @@ stack-chan test application for pwm servo
 - [ESP32Servo](https://github.com/madhephaestus/ESP32Servo)
 
 # ビルド方法
- 下記のリンクを参照してArduinoIDEでビルドできます。
+ 下記のリンクを参照してArduinoIDEでビルドできます。<br>
  [初心者向けM5Stack Core2の始め方（ArduinoIDE編）](https://raspberrypi.mongonta.com/howto-start-m5stack-core2arduinoide/)
 
 # 書き込み後再起動を繰り返す場合
