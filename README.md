@@ -4,6 +4,11 @@ stack-chan test application for pwm servo
 
 ※ ArduinoFrameworkのみです。
 
+# サーボのピンの設定
+Core2はPort.A 13,14、FireとCore1は Port.A 21,22を使うようになっています。違うピンを使用する場合は下記の箇所を書き換えてください。
+
+https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Stackchan_tester.ino#L3-L24
+
 # 使い方
 - ボタンA： X軸、Y軸のサーボを90°に回転します。固定前に90°にするときに使用してください。
 - ボタンB： X軸は0〜180, Y軸は90〜50まで動きます。

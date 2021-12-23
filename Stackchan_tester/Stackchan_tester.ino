@@ -2,22 +2,23 @@
 
 #if defined(ARDUINO_M5STACK_Core2)
   // M5Stack Core2用のサーボの設定
-  // Port.A 32,33
-  // Port.C 13,14
-  // スタックチャン基板 27,19
+  // Port.A G32,G33
+  // Port.C G13,G14
+  // スタックチャン基板 G27,G19
   #include <M5Core2.h>
   #define SERVO_PIN_X 13
   #define SERVO_PIN_Y 14
 #elif defined( ARDUINO_M5STACK_FIRE )
-  // M5Stack Fireの場合はPort.A(21,22)のみです。
+  // M5Stack Fireの場合はPort.A(G21,G22)のみです。
   // I2Cと同時利用は不可
   #include <M5Stack.h>
   #define SERVO_PIN_X 22
   #define SERVO_PIN_Y 21
 #elif defined( ARDUINO_M5Stack_Core_ESP32 )
   // M5Stack Basic/Gray/Go用の設定
-  // Port.A 21,22
-  // Port.C 16,17
+  // Port.A G21,G22
+  // Port.C G16,G17
+  // スタックチャン基板 G5,G2
   #include <M5Stack.h>
   #define SERVO_PIN_X 22
   #define SERVO_PIN_Y 21
