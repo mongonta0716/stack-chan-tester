@@ -1,8 +1,8 @@
 # stack-chan-tester
-スタックチャンを作成するときに、サーボの調整及びテストを行うためのアプリケーションです。<br>
+スタックチャンを作成するときに、PWMサーボの調整及びテストを行うためのアプリケーションです。<br>
 stack-chan test application for pwm servo
 
-※ ArduinoFrameworkのみです。
+※ ArduinoFramework及びPWMサーボのみです。
 
 # サーボのピンの設定
 Core2はPort.A 13,14、FireとCore1は Port.A 21,22を使うようになっています。違うピンを使用する場合は下記の箇所を書き換えてください。
