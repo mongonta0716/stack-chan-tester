@@ -92,13 +92,13 @@ void adjustOffset() {
         servo_offset_y--;
       }
     }
-    if (M5.BtnB.wasPressed()) {
-      // 調整モードのXとYを切り替え
-      adjustX = !adjustX;
-    }
     if (M5.BtnB.pressedFor(2000)) {
       // 調整モードを終了
       break;
+    }
+    if (M5.BtnB.wasPressed()) {
+      // 調整モードのXとYを切り替え
+      adjustX = !adjustX;
     }
     if (M5.BtnC.wasPressed()) {
       // オフセットを増やす
@@ -111,10 +111,9 @@ void adjustOffset() {
     moveXY(90, 90);
 
     if (adjustX) {
-      sprintf(text, "ModeX:%d", servo_offset_x);
+      sprintf(text, "X:%d:BtnB:X/Y", servo_offset_x);
     } else {
-      sprintf(text, "ModeY:%d", servo_offset_y);
-      // text = "ModeY:" + std::to_string(servo_offset_y);
+      sprintf(text, "Y:%d:BtnB:X/Y", servo_offset_y);
     }
     const char* l = (const char*)text;
 
@@ -125,13 +124,13 @@ void adjustOffset() {
 void moveRandom() {
   for (;;) {
     // ランダムモード
-    int x = random(180);
-    int y = random(40);
+    int x = random(0, 180);  // 0〜180° でランダム
+    int y = random(50, 90);  // 50〜90° でランダム
     M5.update();
     if (M5.BtnC.wasPressed()) {
       break;
     }
-    moveXY(x, y + 50);
+    moveXY(x, y);
     int delay_time = random(10);
     delay(2000 + 100 * delay_time);
     avatar.setSpeechText("Stop BtnC");
@@ -167,12 +166,12 @@ void setup() {
 
 void loop() {
   M5.update();
-  if (M5.BtnA.wasPressed()) {
-    moveXY(90, 90);
-  }
   if (M5.BtnA.pressedFor(2000)) {
     // サーボのオフセットを調整するモードへ
     adjustOffset();
+  }
+  if (M5.BtnA.wasPressed()) {
+    moveXY(90, 90);
   }
   
   if (M5.BtnB.wasPressed()) {
@@ -188,7 +187,7 @@ void loop() {
       avatar.setSpeechText("Y 50 -> 90  ");
       moveY(90);
     }
-  }
+  } 
   if (M5.BtnC.wasPressed()) {
     // ランダムモードへ
     moveRandom();
