@@ -24,9 +24,10 @@
   #define SERVO_PIN_Y 17
 #endif
 
-int servo_offset_x = 10; // X軸サーボのオフセット（90°からの+-で設定）
+int servo_offset_x = 0; // X軸サーボのオフセット（90°からの+-で設定）
 int servo_offset_y = 0;  // Y軸サーボのオフセット（90°からの+-で設定）
 
+#include <driver/adc.h>  // ボタンAの誤動作防止
 #include <Avatar.h> // https://github.com/meganetaaan/m5stack-avatar
 #include <ServoEasing.hpp> // https://github.com/ArminJo/ServoEasing       
 
@@ -39,9 +40,12 @@ Avatar avatar;
 ServoEasing servo_x;
 ServoEasing servo_y;
 
-bool random_move = false;
+bool random_mode = false;
+bool adjust_mode = false;
+uint32_t mouth_wait = 2000; // 通常時のセリフ入れ替え時間（msec）
+uint32_t last_mouth_millis = 0;
 
-const char* lyrics[] = { "BtnA:MoveTo90  ", "BtnB:ServoTest  ", "BtnC:RandomMode  "};
+const char* lyrics[] = { "BtnA:MoveTo90  ", "BtnB:ServoTest  ", "BtnC:RandomMode  ", "BtnALong:AdjustMode"};
 const int lyrics_size = sizeof(lyrics) / sizeof(char*);
 int lyrics_idx = 0;
 
@@ -73,8 +77,71 @@ void moveXY(int x, int y, uint32_t millis_for_move = 0) {
   synchronizeAllServosStartAndWaitForAllServosToStop();
 }
 
-void setup() {
+void adjustOffset() {
+  servo_offset_x = 0;
+  servo_offset_y = 0;
+  moveXY(90, 90);
+  bool adjustX = true;
+  char text[20] = "AdjustMode";
+  for (;;) {
+    M5.update();
+    if (M5.BtnA.wasPressed()) {
+      // オフセットを減らす
+      if (adjustX) {
+        servo_offset_x--;
+      } else {
+        servo_offset_y--;
+      }
+    }
+    if (M5.BtnB.wasPressed()) {
+      // 調整モードのXとYを切り替え
+      adjustX = !adjustX;
+    }
+    if (M5.BtnB.pressedFor(2000)) {
+      // 調整モードを終了
+      adjust_mode = false;
+      break;
+    }
+    if (M5.BtnC.wasPressed()) {
+      // オフセットを増やす
+      if (adjustX) {
+        servo_offset_x++;
+      } else {
+        servo_offset_y++;
+      }
+    }
+    moveXY(90, 90);
 
+    if (adjustX) {
+      sprintf(text, "ModeX:%d", servo_offset_x);
+    } else {
+      sprintf(text, "ModeY:%d", servo_offset_y);
+    }
+    const char* l = (const char*)text;
+
+    avatar.setSpeechText(l);
+  }
+}
+
+void moveRandom() {
+  for (;;) {
+    // ランダムモード
+    int x = random(180);
+    int y = random(40);
+    M5.update();
+    if (M5.BtnC.wasPressed()) {
+      random_mode = false;
+      break;
+    }
+     moveXY(x, y + 50);
+    int delay_time = random(10);
+    delay(2000 + 100*delay_time);
+    avatar.setSpeechText("Stop BtnC");
+  }
+}
+
+void setup() {
+  adc_power_acquire(); // ボタンAの誤動作防止
 #if defined(ARDUINO_M5STACK_Core2)
   M5.begin(true, true, true, false, kMBusModeOutput);
   // M5.begin(true, true, true, false, kMBusModeInput);
@@ -97,16 +164,23 @@ void setup() {
   servo_y.setEasingType(EASE_QUADRATIC_IN_OUT);
   setSpeedForAllServos(60);
   avatar.init();
+  last_mouth_millis = millis();
 }
 
 void loop() {
   M5.update();
   if (M5.BtnA.wasPressed()) {
-    random_move = false;
+    adjust_mode = false;
+    random_mode = false;
     moveXY(90, 90);
   }
+  if (M5.BtnA.pressedFor(2000)) {
+    adjust_mode = true;
+    random_mode = false;
+  }
+  
   if (M5.BtnB.wasPressed()) {
-    random_move = false;
+    random_mode = false;
     for (int i=0; i<2; i++) {
       avatar.setSpeechText("X 90 -> 0  ");
       moveX(0);
@@ -121,28 +195,27 @@ void loop() {
     }
   }
   if (M5.BtnC.wasPressed()) {
-    random_move = !random_move;
+    adjust_mode = false;
+    random_mode = true;
   }
 
-  if (random_move) {
-    int x = random(180);
-    int y = random(40);
-    M5.update();
-    if (M5.BtnC.wasPressed()) {
-      random_move = false;
-    }
-     moveXY(x, y + 50);
-    int delay_time = random(10);
-    delay(2000 + 100*delay_time);
-    avatar.setSpeechText("Stop BtnC");
+  if (adjust_mode) {
+    // オフセット調整モード
+    adjustOffset();
   }
-  if (!random_move) {
-    const char* l = lyrics[lyrics_idx++ % lyrics_size];
-    avatar.setSpeechText(l);
-    avatar.setMouthOpenRatio(0.7);
-    delay(200);
-    avatar.setMouthOpenRatio(0.0);
-    delay(2000);
+  if (random_mode) {
+    moveRandom();
+  }
+
+  if (!random_mode or !adjust_mode) {
+    if ((millis() - last_mouth_millis) > mouth_wait) {
+      const char* l = lyrics[lyrics_idx++ % lyrics_size];
+      avatar.setSpeechText(l);
+      avatar.setMouthOpenRatio(0.7);
+      delay(200);
+      avatar.setMouthOpenRatio(0.0);
+      last_mouth_millis = millis();
+    }
   }
 
 }
