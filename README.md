@@ -2,15 +2,19 @@
 スタックチャンを作成するときに、PWMサーボの調整及びテストを行うためのアプリケーションです。<br>
 stack-chan test application for pwm servo
 
+# 対応キット
+ BOOTHで頒布している [ｽﾀｯｸﾁｬﾝ M5GoBottom版 組み立てキット](https://mongonta.booth.pm/)の動作確認及び組立時の設定用に開発しました。ピンの設定を変えることによりスタックチャン基板にも対応可能です。
+
 ※ ArduinoFramework及びPWMサーボのみです。
 
 # サーボのピンの設定
-Core2はPort.A 13,14、FireとCore1は Port.A 21,22を使うようになっています。違うピンを使用する場合は下記の箇所を書き換えてください。
+Core2はPort.A 13,14、Fireは Port.A 22,21、Core1は Port.Cを使うようになっています。違うピンを使用する場合は下記の箇所を書き換えてください。
 
 https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Stackchan_tester.ino#L3-L24
 
 # サーボのオフセット調整
-SG90系のPWMサーボは個体差が多く、90°を指定しても少しずれる場合があります。その場合は下記のオフセット値を調整してください。
+SG90系のPWMサーボは個体差が多く、90°を指定しても少しずれる場合があります。その場合は下記のオフセット値を調整してください。(90°からの角度（±）を設定します。)
+
 https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Stackchan_tester.ino#L27-L28
 
 # 使い方
@@ -22,6 +26,10 @@ https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Sta
 - [M5Stack-Avatar](https://github.com/meganetaaan/m5stack-avatar)
 - [ServoEasing](https://github.com/ArminJo/ServoEasing)
 - [ESP32Servo](https://github.com/madhephaestus/ESP32Servo)
+
+ArduinoIDEでの詳しいライブラリの追加方法は下記のブログを参照してください。（日本語）
+
+[ｽﾀｯｸﾁｬﾝ M5GoBottom版のファームウェアについて | M5Stack沼人の日記](https://raspberrypi.mongonta.com/softwares-for-stackchan/)
 
 # ビルド方法
  下記のリンクを参照してArduinoIDEでビルドできます。<br>
@@ -36,6 +44,11 @@ https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Sta
 ## 対処②
 <del> librariesの中にあるm5stack-avatar/src/Avatar.cppを修正してください。修正箇所は下記のリンクにあります。
  - [fix platformio link error #66](https://github.com/meganetaaan/m5stack-avatar/pull/66/commits/f28efa87d482a730237565a666d67d7422e638f4)</del>
+
+# ｽﾀｯｸﾁｬﾝについて
+ｽﾀｯｸﾁｬﾝは[ししかわさん](https://github.com/meganetaaan)が公開しているオープンソースのプロジェクトです。
+
+https://github.com/meganetaaan/stack-chan
 
 # author
  Takao Akaki
