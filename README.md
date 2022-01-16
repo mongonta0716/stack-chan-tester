@@ -45,6 +45,11 @@ ArduinoIDEでの詳しいライブラリの追加方法は下記のブログを�
  下記のリンクを参照してArduinoIDEでビルドできます。<br>
  [初心者向けM5Stack Core2の始め方（ArduinoIDE編）](https://raspberrypi.mongonta.com/howto-start-m5stack-core2arduinoide/)
 
+# M5Core2ライブラリの修正（M5Stack Core2のみ）
+2022/1/16現在M5Core2ライブラリ(v0.1.0)のバグのためボタンの長押しが効きません。M5Core2ライブラリの下記の点を修正して下さい。
+
+https://github.com/m5stack/M5Core2/pull/85/commits/cd217c25bd022ef4f9b1e235122f68aebf5a61ae
+
 # <del>書き込み後再起動を繰り返す場合</del>(M5Stack-Avatar 0.7.4で修正されました。)
 <del> 2021/12現在、Arduino-esp32のバージョンをv2.0.0以上にすると、書き込み後再起動を繰り返すという現象が見られます。</del>
 
