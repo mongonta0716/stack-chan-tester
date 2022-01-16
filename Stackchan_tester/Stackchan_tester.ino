@@ -40,8 +40,6 @@ Avatar avatar;
 ServoEasing servo_x;
 ServoEasing servo_y;
 
-bool random_mode = false;
-bool adjust_mode = false;
 uint32_t mouth_wait = 2000; // 通常時のセリフ入れ替え時間（msec）
 uint32_t last_mouth_millis = 0;
 
@@ -78,6 +76,7 @@ void moveXY(int x, int y, uint32_t millis_for_move = 0) {
 }
 
 void adjustOffset() {
+  // サーボのオフセットを調整するモード
   servo_offset_x = 0;
   servo_offset_y = 0;
   moveXY(90, 90);
@@ -99,7 +98,6 @@ void adjustOffset() {
     }
     if (M5.BtnB.pressedFor(2000)) {
       // 調整モードを終了
-      adjust_mode = false;
       break;
     }
     if (M5.BtnC.wasPressed()) {
@@ -116,6 +114,7 @@ void adjustOffset() {
       sprintf(text, "ModeX:%d", servo_offset_x);
     } else {
       sprintf(text, "ModeY:%d", servo_offset_y);
+      // text = "ModeY:" + std::to_string(servo_offset_y);
     }
     const char* l = (const char*)text;
 
@@ -130,12 +129,11 @@ void moveRandom() {
     int y = random(40);
     M5.update();
     if (M5.BtnC.wasPressed()) {
-      random_mode = false;
       break;
     }
-     moveXY(x, y + 50);
+    moveXY(x, y + 50);
     int delay_time = random(10);
-    delay(2000 + 100*delay_time);
+    delay(2000 + 100 * delay_time);
     avatar.setSpeechText("Stop BtnC");
   }
 }
@@ -170,17 +168,14 @@ void setup() {
 void loop() {
   M5.update();
   if (M5.BtnA.wasPressed()) {
-    adjust_mode = false;
-    random_mode = false;
     moveXY(90, 90);
   }
   if (M5.BtnA.pressedFor(2000)) {
-    adjust_mode = true;
-    random_mode = false;
+    // サーボのオフセットを調整するモードへ
+    adjustOffset();
   }
   
   if (M5.BtnB.wasPressed()) {
-    random_mode = false;
     for (int i=0; i<2; i++) {
       avatar.setSpeechText("X 90 -> 0  ");
       moveX(0);
@@ -195,27 +190,17 @@ void loop() {
     }
   }
   if (M5.BtnC.wasPressed()) {
-    adjust_mode = false;
-    random_mode = true;
-  }
-
-  if (adjust_mode) {
-    // オフセット調整モード
-    adjustOffset();
-  }
-  if (random_mode) {
+    // ランダムモードへ
     moveRandom();
   }
 
-  if (!random_mode or !adjust_mode) {
-    if ((millis() - last_mouth_millis) > mouth_wait) {
-      const char* l = lyrics[lyrics_idx++ % lyrics_size];
-      avatar.setSpeechText(l);
-      avatar.setMouthOpenRatio(0.7);
-      delay(200);
-      avatar.setMouthOpenRatio(0.0);
-      last_mouth_millis = millis();
-    }
+  if ((millis() - last_mouth_millis) > mouth_wait) {
+    const char* l = lyrics[lyrics_idx++ % lyrics_size];
+    avatar.setSpeechText(l);
+    avatar.setMouthOpenRatio(0.7);
+    delay(200);
+    avatar.setMouthOpenRatio(0.0);
+    last_mouth_millis = millis();
   }
 
 }

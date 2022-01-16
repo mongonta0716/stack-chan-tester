@@ -8,7 +8,7 @@ stack-chan test application for pwm servo
 ※ ArduinoFramework及びPWMサーボのみです。
 
 # サーボのピンの設定
-Core2はPort.A 13,14、Fireは Port.A 22,21、Core1は Port.Cを使うようになっています。違うピンを使用する場合は下記の箇所を書き換えてください。
+Core2はPort.C(G13,G14)、Fireは Port.A(G22,G21)、Core1は Port.C(G16,G17)を使うようになっています。違うピンを使用する場合は下記の箇所を書き換えてください。
 
 https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Stackchan_tester.ino#L3-L24
 
