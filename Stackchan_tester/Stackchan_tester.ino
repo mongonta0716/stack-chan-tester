@@ -5,13 +5,11 @@
   // Port.A X:G32, Y:G33
   // Port.C X:G13, Y:G14
   // スタックチャン基板 X:G27, Y:G19
-  #include <M5Core2.h>
   #define SERVO_PIN_X 13
   #define SERVO_PIN_Y 14
 #elif defined( ARDUINO_M5STACK_FIRE )
   // M5Stack Fireの場合はPort.A(X:G22, Y:G21)のみです。
   // I2Cと同時利用は不可
-  #include <M5Stack.h>
   #define SERVO_PIN_X 22
   #define SERVO_PIN_Y 21
 #elif defined( ARDUINO_M5Stack_Core_ESP32 )
@@ -19,15 +17,14 @@
   // Port.A X:G22, Y:G21
   // Port.C X:G16, Y:G17
   // スタックチャン基板 X:G5, Y:G2
-  #include <M5Stack.h>
   #define SERVO_PIN_X 16
   #define SERVO_PIN_Y 17
 #endif
+#include <M5Unified.h>
 
 int servo_offset_x = 0; // X軸サーボのオフセット（90°からの+-で設定）
 int servo_offset_y = 0;  // Y軸サーボのオフセット（90°からの+-で設定）
 
-#include <driver/adc.h>  // ボタンAの誤動作防止
 #include <Avatar.h> // https://github.com/meganetaaan/m5stack-avatar
 #include <ServoEasing.hpp> // https://github.com/ArminJo/ServoEasing       
 
@@ -124,27 +121,23 @@ void adjustOffset() {
 void moveRandom() {
   for (;;) {
     // ランダムモード
-    int x = random(0, 180);  // 0〜180° でランダム
-    int y = random(50, 90);  // 50〜90° でランダム
+    int x = random(45, 135);  // 45〜135° でランダム
+    int y = random(60, 90);   // 50〜90° でランダム
     M5.update();
     if (M5.BtnC.wasPressed()) {
       break;
     }
-    moveXY(x, y);
     int delay_time = random(10);
-    delay(2000 + 100 * delay_time);
-    avatar.setSpeechText("Stop BtnC");
+    moveXY(x, y, 1000 + 100 * delay_time);
+    delay(3000 + 500 * delay_time);
+    //avatar.setSpeechText("Stop BtnC");
+    avatar.setSpeechText("");
   }
 }
 
 void setup() {
-  adc_power_acquire(); // ボタンAの誤動作防止
-#if defined(ARDUINO_M5STACK_Core2)
-  M5.begin(true, true, true, false, kMBusModeOutput);
-  // M5.begin(true, true, true, false, kMBusModeInput);
-#elif defined( ARDUINO_M5STACK_FIRE ) || defined( ARDUINO_M5Stack_Core_ESP32 )
-  M5.begin(true, true, true, false); // Grove.Aを使う場合は第四引数(I2C)はfalse
-#endif
+  auto cfg = M5.config();
+  M5.begin(cfg);
   if (servo_x.attach(SERVO_PIN_X, 
                      START_DEGREE_VALUE_X + servo_offset_x,
                      DEFAULT_MICROSECONDS_FOR_0_DEGREE,
