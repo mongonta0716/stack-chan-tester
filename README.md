@@ -30,33 +30,29 @@ https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Sta
     * ボタンB長押し: 調整モードの終了
 # 必要なライブラリ（動作確認済バージョン）
 ※ 最新で動かない場合はライブラリのバージョンを合わせてみてください。
-- [M5Stack-Avatar](https://github.com/meganetaaan/m5stack-avatar) v0.7.4まで確認
-- [ServoEasing](https://github.com/ArminJo/ServoEasing) v2.4.0まで確認
-- [ESP32Servo](https://github.com/madhephaestus/ESP32Servo) v0.11.0まで確認
+- [M5SUnified](https://github.com/m5stack/M5Unified) v0.0.5で確認
+- [M5Stack-Avatar](https://github.com/meganetaaan/m5stack-avatar) v0.7.4で確認
+- [ServoEasing](https://github.com/ArminJo/ServoEasing) v2.4.0で確認
+- [ESP32Servo](https://github.com/madhephaestus/ESP32Servo) v0.11.0で確認
 
 ArduinoIDEでの詳しいライブラリの追加方法は下記のブログを参照してください。（日本語）
 
 [ｽﾀｯｸﾁｬﾝ M5GoBottom版のファームウェアについて | M5Stack沼人の日記](https://raspberrypi.mongonta.com/softwares-for-stackchan/)
 
 # ボードマネージャーのバージョン
-※ Arduino-esp32 v2.0.0で動作確認しています。2.0.0以降で動作しない場合はボードマネージャーでバージョンを戻してみてください。
+※ Arduino-esp32 v2.0.2で動作確認しています。2.0.2以降で動作しない場合はボードマネージャーでバージョンを戻してみてください。
 
 # ビルド方法
  下記のリンクを参照してArduinoIDEでビルドできます。<br>
  [初心者向けM5Stack Core2の始め方（ArduinoIDE編）](https://raspberrypi.mongonta.com/howto-start-m5stack-core2arduinoide/)
 
-# M5Core2ライブラリの修正（M5Stack Core2のみ）
-2022/1/16現在M5Core2ライブラリ(v0.1.0)のバグのためボタンの長押しが効きません。M5Core2ライブラリの下記の点を修正して下さい。
-
-https://github.com/m5stack/M5Core2/pull/85/commits/cd217c25bd022ef4f9b1e235122f68aebf5a61ae
-
-# <del>書き込み後再起動を繰り返す場合</del>(M5Stack-Avatar 0.7.4で修正されました。)
+# <del>書き込み後再起動を繰り返す場合</del><br>(M5Stack-Avatar 0.7.4で修正されました。)
 <del> 2021/12現在、Arduino-esp32のバージョンをv2.0.0以上にすると、書き込み後再起動を繰り返すという現象が見られます。</del>
 
-## 対処①
+## <del>対処①</del>
 <del> ボードマネージャーでarduino-esp32 ver.1.0.6に戻してビルドする。</del>
 
-## 対処②
+## <del>対処②</del>
 <del> librariesの中にあるm5stack-avatar/src/Avatar.cppを修正してください。修正箇所は下記のリンクにあります。
  - [fix platformio link error #66](https://github.com/meganetaaan/m5stack-avatar/pull/66/commits/f28efa87d482a730237565a666d67d7422e638f4)</del>
 
