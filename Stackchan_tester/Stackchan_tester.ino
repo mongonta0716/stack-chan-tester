@@ -1,8 +1,9 @@
 #include <Arduino.h>
 
+#include <M5Unified.h>
 #if defined(ARDUINO_M5STACK_Core2)
   // M5Stack Core2用のサーボの設定
-  // Port.A X:G32, Y:G33
+  // Port.A X:G33, Y:G32
   // Port.C X:G13, Y:G14
   // スタックチャン基板 X:G27, Y:G19
   #define SERVO_PIN_X 13
@@ -20,9 +21,8 @@
   #define SERVO_PIN_X 16
   #define SERVO_PIN_Y 17
 #endif
-#include <M5Unified.h>
 
-int servo_offset_x = 0; // X軸サーボのオフセット（90°からの+-で設定）
+int servo_offset_x = 0;  // X軸サーボのオフセット（90°からの+-で設定）
 int servo_offset_y = 0;  // Y軸サーボのオフセット（90°からの+-で設定）
 
 #include <Avatar.h> // https://github.com/meganetaaan/m5stack-avatar
@@ -121,7 +121,7 @@ void adjustOffset() {
 void moveRandom() {
   for (;;) {
     // ランダムモード
-    int x = random(45, 135);  // 45〜135° でランダム
+    int x = random(60, 120);  // 45〜135° でランダム
     int y = random(60, 90);   // 50〜90° でランダム
     M5.update();
     if (M5.BtnC.wasPressed()) {
@@ -129,7 +129,7 @@ void moveRandom() {
     }
     int delay_time = random(10);
     moveXY(x, y, 1000 + 100 * delay_time);
-    delay(3000 + 500 * delay_time);
+    delay(2000 + 500 * delay_time);
     //avatar.setSpeechText("Stop BtnC");
     avatar.setSpeechText("");
   }
@@ -155,6 +155,7 @@ void setup() {
   setSpeedForAllServos(60);
   avatar.init();
   last_mouth_millis = millis();
+  //moveRandom();
 }
 
 void loop() {
