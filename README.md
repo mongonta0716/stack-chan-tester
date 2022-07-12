@@ -30,7 +30,7 @@ https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Sta
     * ボタンB長押し: 調整モードの終了
 # 必要なライブラリ（動作確認済バージョン）
 ※ 最新で動かない場合はライブラリのバージョンを合わせてみてください。
-- [M5SUnified](https://github.com/m5stack/M5Unified) v0.0.7で確認
+- [M5Unified](https://github.com/m5stack/M5Unified) v0.0.7で確認
 - [M5Stack-Avatar](https://github.com/meganetaaan/m5stack-avatar) v0.7.5(?)で確認<br>M5Stack-Avatarは2022/5/6現在Githubの最新を利用してください。(それ以前のバージョンはM5Unifiedに対応しておらず。m5の二重定義エラーが出ます。)
 - [ServoEasing](https://github.com/ArminJo/ServoEasing) v2.4.0で確認
 - [ESP32Servo](https://github.com/madhephaestus/ESP32Servo) v0.11.0で確認
