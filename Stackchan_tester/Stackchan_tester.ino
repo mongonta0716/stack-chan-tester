@@ -27,6 +27,7 @@ int servo_offset_y = 0;  // Y軸サーボのオフセット（90°からの+-で
 
 #include <Avatar.h> // https://github.com/meganetaaan/m5stack-avatar
 #include <ServoEasing.hpp> // https://github.com/ArminJo/ServoEasing       
+#include "formatString.hpp" // https://gist.github.com/GOB52/e158b689273569357b04736b78f050d6
 
 using namespace m5avatar;
 Avatar avatar;
@@ -78,7 +79,6 @@ void adjustOffset() {
   servo_offset_y = 0;
   moveXY(90, 90);
   bool adjustX = true;
-  char text[20] = "AdjustMode";
   for (;;) {
     M5.update();
     if (M5.BtnA.wasPressed()) {
@@ -107,21 +107,22 @@ void adjustOffset() {
     }
     moveXY(90, 90);
 
-    if (adjustX) {
-      sprintf(text, "X:%d:BtnB:X/Y", servo_offset_x);
-    } else {
-      sprintf(text, "Y:%d:BtnB:X/Y", servo_offset_y);
-    }
-    const char* l = (const char*)text;
+    std::string s;
 
-    avatar.setSpeechText(l);
+    if (adjustX) {
+      s = formatString("%s:%d:BtnB:X/Y", "X", servo_offset_x);
+    } else {
+      s = formatString("%s:%d:BtnB:X/Y", "Y", servo_offset_y);
+    }
+    avatar.setSpeechText(s.c_str());
+
   }
 }
 
 void moveRandom() {
   for (;;) {
     // ランダムモード
-    int x = random(60, 120);  // 45〜135° でランダム
+    int x = random(45, 135);  // 45〜135° でランダム
     int y = random(60, 90);   // 50〜90° でランダム
     M5.update();
     if (M5.BtnC.wasPressed()) {
