@@ -1,4 +1,7 @@
 # stack-chan-tester
+
+日本語 | [English](README_en.md)
+
 スタックチャンを作成するときに、PWMサーボの調整及びテストを行うためのアプリケーションです。<br>
 stack-chan test application for pwm servo
 
