@@ -52,7 +52,7 @@ You can build with ArduinoIDE by referring to the following link. (in Japanese)
  [初心者向けM5Stack Core2の始め方（ArduinoIDE編）](https://raspberrypi.mongonta.com/howto-start-m5stack-core2arduinoide/)
 
 # About stack chan
-Stack chan is [shishikawasan](https://github.com/ meganetaaan) is an open source project.
+Stack chan is [meganetaaan](https://github.com/meganetaaan) is an open source project.
 
 https://github.com/meganetaaan/stack-chan
 
