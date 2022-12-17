@@ -5,7 +5,7 @@
   // M5Stack Core2用のサーボの設定
   // Port.A X:G33, Y:G32
   // Port.C X:G13, Y:G14
-  // スタックチャン基板 X:G27, Y:G19
+  // スタックチャン基板 X:G19, Y:G27
   #define SERVO_PIN_X 13
   #define SERVO_PIN_Y 14
 #elif defined( ARDUINO_M5STACK_FIRE )
