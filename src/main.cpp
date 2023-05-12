@@ -201,7 +201,7 @@ void setup() {
   avatar.init();
   last_mouth_millis = millis();
   //moveRandom();
-  testServo();
+  //testServo();
 }
 
 void loop() {
