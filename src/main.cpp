@@ -1,5 +1,8 @@
-#include <Arduino.h>
+ #include <Arduino.h>
 
+#include <SD.h>
+#include <Ticker.h>
+#include <M5StackUpdater.h>
 #include <M5Unified.h>
 #if defined(ARDUINO_M5STACK_Core2)
   // M5Stack Core2用のサーボの設定
@@ -18,8 +21,17 @@
   // Port.A X:G22, Y:G21
   // Port.C X:G16, Y:G17
   // スタックチャン基板 X:G5, Y:G2
-  #define SERVO_PIN_X 16
+  #define SERVO_PIN_X 22
+  #define SERVO_PIN_Y 21
+#elif defined( ARDUINO_M5STACK_CORES3 )
+  // M5Stack CoreS3用の設定 ※暫定的にplatformio.iniにARDUINO_M5STACK_CORES3を定義しています。
+  // Port.A X:G1 Y:G2
+  // Port.B X:G8 Y:G9
+  // Port.C X:18 Y:17
+  #define SERVO_PIN_X 18 
   #define SERVO_PIN_Y 17
+  #include <gob_unifiedButton.hpp> // 2023/5/12現在 M5UnifiedにBtnA等がないのでGobさんのライブラリを使用
+  gob::UnifiedButton unifiedButton;
 #endif
 
 int servo_offset_x = 0;  // X軸サーボのオフセット（90°からの+-で設定）
@@ -34,6 +46,9 @@ Avatar avatar;
 
 #define START_DEGREE_VALUE_X 90
 #define START_DEGREE_VALUE_Y 90
+
+#define SDU_APP_PATH "/stackchan_tester.bin"
+#define TFCARD_CS_PIN 4
 
 ServoEasing servo_x;
 ServoEasing servo_y;
@@ -80,6 +95,7 @@ void adjustOffset() {
   moveXY(90, 90);
   bool adjustX = true;
   for (;;) {
+    unifiedButton.update(); // M5.update() よりも前に呼ぶ事
     M5.update();
     if (M5.BtnA.wasPressed()) {
       // オフセットを減らす
@@ -124,6 +140,7 @@ void moveRandom() {
     // ランダムモード
     int x = random(45, 135);  // 45〜135° でランダム
     int y = random(60, 90);   // 50〜90° でランダム
+    unifiedButton.update(); // M5.update() よりも前に呼ぶ事
     M5.update();
     if (M5.BtnC.wasPressed()) {
       break;
@@ -135,10 +152,37 @@ void moveRandom() {
     avatar.setSpeechText("");
   }
 }
+void testServo() {
+  for (int i=0; i<2; i++) {
+    avatar.setSpeechText("X 90 -> 0  ");
+    moveX(0);
+    avatar.setSpeechText("X 0 -> 180  ");
+    moveX(180);
+    avatar.setSpeechText("X 180 -> 90  ");
+    moveX(90);
+    avatar.setSpeechText("Y 90 -> 50  ");
+    moveY(50);
+    avatar.setSpeechText("Y 50 -> 90  ");
+    moveY(90);
+  }
+}
 
 void setup() {
   auto cfg = M5.config();
+  cfg.output_power = true;
   M5.begin(cfg);
+#if defined( ARDUINO_M5STACK_CORES3 )
+  unifiedButton.begin(&M5.Display, gob::UnifiedButton::appearance_t::transparent_all);
+#endif
+  M5.Log.setLogLevel(m5::log_target_display, ESP_LOG_NONE);
+  M5.Log.setLogLevel(m5::log_target_serial, ESP_LOG_INFO);
+  M5.Log.setEnableColor(m5::log_target_serial, false);
+  M5_LOGI("Hello World");
+  Serial.println("HelloWorldSerial");
+  //USBSerial.println("HelloWorldUSBSerial");
+#if defined( ARDUINO_M5STACK_FIRE )
+  M5.In_I2C.release();
+#endif
   if (servo_x.attach(SERVO_PIN_X, 
                      START_DEGREE_VALUE_X + servo_offset_x,
                      DEFAULT_MICROSECONDS_FOR_0_DEGREE,
@@ -157,9 +201,11 @@ void setup() {
   avatar.init();
   last_mouth_millis = millis();
   //moveRandom();
+  testServo();
 }
 
 void loop() {
+  unifiedButton.update(); // M5.update() よりも前に呼ぶ事
   M5.update();
   if (M5.BtnA.pressedFor(2000)) {
     // サーボのオフセットを調整するモードへ
@@ -183,7 +229,14 @@ void loop() {
       moveY(90);
     }
   } 
-  if (M5.BtnC.wasPressed()) {
+  if (M5.BtnC.pressedFor(5000)) {
+    Serial.println("Will copy this sketch to filesystem");
+    if (saveSketchToFS( SD, SDU_APP_PATH, TFCARD_CS_PIN )) {
+      Serial.println("Copy Successful!");
+    } else {
+      Serial.println("Copy failed!");
+    }
+  } else if (M5.BtnC.wasPressed()) {
     // ランダムモードへ
     moveRandom();
   }
@@ -195,6 +248,9 @@ void loop() {
     delay(200);
     avatar.setMouthOpenRatio(0.0);
     last_mouth_millis = millis();
+    Serial.println("LoopSerial");
+    M5_LOGI("LoopM5LOGI");
+    //USBSerial.println("LoopUSBSerial");
   }
 
 }
