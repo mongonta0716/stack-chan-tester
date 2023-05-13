@@ -10,9 +10,9 @@ stack-chan test application for pwm servo
 This is only for ArduinoFramework and PWM servos.
 
 # Pin settings for servo
-Core2 uses Port.C(G13,G14), Fire uses Port.A(G22,G21), and Core1 uses Port.C(G16,G17). If you want to use different pins, please rewrite the following section.
+CoreS3 uses Port.C(G18,G17), Core2 uses Port.C(G13,G14), Fire uses Port.A(G22,G21), and Core1 uses Port.C(G16,G17). If you want to use different pins, please rewrite the following section.
 
-https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Stackchan_tester.ino#L3-L24
+https://github.com/mongonta0716/stack-chan-tester/blob/main/src/main.cpp#L7-L35
 
 # Adjustment of servo offset
 There are many individual differences among SG90 series PWM servos, and even if 90° is specified, the servo may shift a little. In this case, please adjust the following offset value. (Set the angle (±) from 90°.)
@@ -30,6 +30,11 @@ https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Sta
     * Button B: toggles between X and Y axis
     * Button C: Increase offset
     * Button B long press: Out the mode to adjust. 
+
+## Button handling in CoreS3
+CoreS3 has changed the handling of buttons because the BtnA, B, and C parts of Core2 have been replaced by cameras and microphones. <br>
+The screen is divided vertically into three parts: left: BtnA, center: BtnB, and right: BtnC.
+
 # Requirement Libraries
 ※ If it does not work with the latest version, try matching the library version.
 - [M5Unified](https://github.com/m5stack/M5Unified) v0.0.7
@@ -41,15 +46,9 @@ Please refer to the following blog for detailed instructions on how to add libra
 
 [ｽﾀｯｸﾁｬﾝ M5GoBottom版のファームウェアについて | M5Stack沼人の日記]( https://raspberrypi.mongonta.com/softwares-for-stackchan/)
 
-# Version of arduino-esp32
-
-※ We have confirmed that it works with Arduino-esp32 v2.0.2. If it does not work with 2.0.2 or later, please try reverting the version in the board manager.
-
 # How to build
 
-You can build with ArduinoIDE by referring to the following link. (in Japanese)
- 
- [初心者向けM5Stack Core2の始め方（ArduinoIDE編）](https://raspberrypi.mongonta.com/howto-start-m5stack-core2arduinoide/)
+v0.1 was ArduinoIDE, but now it is intended to be built with PlatformIO.
 
 # About stack chan
 Stack chan is [meganetaaan](https://github.com/meganetaaan) is an open source project.
