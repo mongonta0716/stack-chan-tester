@@ -95,7 +95,9 @@ void adjustOffset() {
   moveXY(90, 90);
   bool adjustX = true;
   for (;;) {
+#if defined (ARDUINO_M5STACK_CORES3)
     unifiedButton.update(); // M5.update() よりも前に呼ぶ事
+#endif
     M5.update();
     if (M5.BtnA.wasPressed()) {
       // オフセットを減らす
@@ -140,7 +142,9 @@ void moveRandom() {
     // ランダムモード
     int x = random(45, 135);  // 45〜135° でランダム
     int y = random(60, 90);   // 50〜90° でランダム
+#if defined( ARDUINO_M5STACK_CORES3)
     unifiedButton.update(); // M5.update() よりも前に呼ぶ事
+#endif
     M5.update();
     if (M5.BtnC.wasPressed()) {
       break;
@@ -205,7 +209,9 @@ void setup() {
 }
 
 void loop() {
+#if defined( ARDUINO_M5STACK_CORES3)
   unifiedButton.update(); // M5.update() よりも前に呼ぶ事
+#endif
   M5.update();
   if (M5.BtnA.pressedFor(2000)) {
     // サーボのオフセットを調整するモードへ
