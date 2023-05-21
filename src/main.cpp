@@ -168,9 +168,9 @@ void testServo() {
 }
 
 void setup() {
-  auto cfg = M5.config();
-  cfg.output_power = true;
-  M5.begin(cfg);
+  auto cfg = M5.config();     // 設定用の情報を抽出
+  cfg.output_power = true;   // Groveポートの出力をしない
+  M5.begin(cfg);              // M5Stackをcfgの設定で初期化
 #if defined( ARDUINO_M5STACK_CORES3 )
   unifiedButton.begin(&M5.Display, gob::UnifiedButton::appearance_t::transparent_all);
 #endif
@@ -181,6 +181,7 @@ void setup() {
   Serial.println("HelloWorldSerial");
   //USBSerial.println("HelloWorldUSBSerial");
 #if defined( ARDUINO_M5STACK_FIRE )
+  // M5Stack Fireの場合、Port.Aを使う場合は内部I2CをOffにする必要がある。
   M5.In_I2C.release();
 #endif
   if (servo_x.attach(SERVO_PIN_X, 
@@ -199,9 +200,10 @@ void setup() {
   servo_y.setEasingType(EASE_QUADRATIC_IN_OUT);
   setSpeedForAllServos(60);
   avatar.init();
+  avatar.setM5PowerClass(&M5.Power);
   last_mouth_millis = millis();
   //moveRandom();
-  testServo();
+  //testServo();
 }
 
 void loop() {
@@ -216,25 +218,14 @@ void loop() {
   }
   
   if (M5.BtnB.wasPressed()) {
-    for (int i=0; i<2; i++) {
-      avatar.setSpeechText("X 90 -> 0  ");
-      moveX(0);
-      avatar.setSpeechText("X 0 -> 180  ");
-      moveX(180);
-      avatar.setSpeechText("X 180 -> 90  ");
-      moveX(90);
-      avatar.setSpeechText("Y 90 -> 50  ");
-      moveY(50);
-      avatar.setSpeechText("Y 50 -> 90  ");
-      moveY(90);
-    }
+    testServo();
   } 
   if (M5.BtnC.pressedFor(5000)) {
-    Serial.println("Will copy this sketch to filesystem");
+    M5_LOGI("Will copy this sketch to filesystem");
     if (saveSketchToFS( SD, SDU_APP_PATH, TFCARD_CS_PIN )) {
-      Serial.println("Copy Successful!");
+      M5_LOGI("Copy Successful!");
     } else {
-      Serial.println("Copy failed!");
+      M5_LOGI("Copy failed!");
     }
   } else if (M5.BtnC.wasPressed()) {
     // ランダムモードへ
@@ -248,9 +239,8 @@ void loop() {
     delay(200);
     avatar.setMouthOpenRatio(0.0);
     last_mouth_millis = millis();
-    Serial.println("LoopSerial");
-    M5_LOGI("LoopM5LOGI");
-    //USBSerial.println("LoopUSBSerial");
   }
+  // delayを50msec程度入れないとCoreS3でバッテリーレベルと充電状態がおかしくなる。
+  delay(0);
 
 }
