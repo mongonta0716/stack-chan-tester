@@ -9,8 +9,8 @@
   // Port.A X:G33, Y:G32
   // Port.C X:G13, Y:G14
   // スタックチャン基板 X:G19, Y:G27
-  #define SERVO_PIN_X 13
-  #define SERVO_PIN_Y 14
+  #define SERVO_PIN_X 33
+  #define SERVO_PIN_Y 32
 #elif defined( ARDUINO_M5STACK_FIRE )
   // M5Stack Fireの場合はPort.A(X:G22, Y:G21)のみです。
   // I2Cと同時利用は不可
@@ -95,7 +95,9 @@ void adjustOffset() {
   moveXY(90, 90);
   bool adjustX = true;
   for (;;) {
+#ifdef ARDUINO_M5STACK_CORES3
     unifiedButton.update(); // M5.update() よりも前に呼ぶ事
+#endif
     M5.update();
     if (M5.BtnA.wasPressed()) {
       // オフセットを減らす
@@ -140,7 +142,9 @@ void moveRandom() {
     // ランダムモード
     int x = random(45, 135);  // 45〜135° でランダム
     int y = random(60, 90);   // 50〜90° でランダム
+#ifdef ARDUINO_M5STACK_CORES3
     unifiedButton.update(); // M5.update() よりも前に呼ぶ事
+#endif
     M5.update();
     if (M5.BtnC.wasPressed()) {
       break;
@@ -148,6 +152,7 @@ void moveRandom() {
     int delay_time = random(10);
     moveXY(x, y, 1000 + 100 * delay_time);
     delay(2000 + 500 * delay_time);
+    avatar.setBatteryStatus(M5.Power.isCharging(), M5.Power.getBatteryLevel());
     //avatar.setSpeechText("Stop BtnC");
     avatar.setSpeechText("");
   }
@@ -200,14 +205,16 @@ void setup() {
   servo_y.setEasingType(EASE_QUADRATIC_IN_OUT);
   setSpeedForAllServos(60);
   avatar.init();
-  avatar.setM5PowerClass(&M5.Power);
   last_mouth_millis = millis();
+  avatar.setBatteryIcon(true);
   //moveRandom();
   //testServo();
 }
 
 void loop() {
+#ifdef ARDUINO_M5STACK_CORES3
   unifiedButton.update(); // M5.update() よりも前に呼ぶ事
+#endif
   M5.update();
   if (M5.BtnA.pressedFor(2000)) {
     // サーボのオフセットを調整するモードへ
@@ -239,6 +246,7 @@ void loop() {
     delay(200);
     avatar.setMouthOpenRatio(0.0);
     last_mouth_millis = millis();
+    avatar.setBatteryStatus(M5.Power.isCharging(), M5.Power.getBatteryLevel());
   }
   // delayを50msec程度入れないとCoreS3でバッテリーレベルと充電状態がおかしくなる。
   delay(0);
