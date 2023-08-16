@@ -9,8 +9,8 @@
   // Port.A X:G33, Y:G32
   // Port.C X:G13, Y:G14
   // スタックチャン基板 X:G19, Y:G27
-  #define SERVO_PIN_X 13
-  #define SERVO_PIN_Y 14
+  #define SERVO_PIN_X 33
+  #define SERVO_PIN_Y 32
 #elif defined( ARDUINO_M5STACK_FIRE )
   // M5Stack Fireの場合はPort.A(X:G22, Y:G21)のみです。
   // I2Cと同時利用は不可
@@ -95,7 +95,7 @@ void adjustOffset() {
   moveXY(90, 90);
   bool adjustX = true;
   for (;;) {
-#if defined (ARDUINO_M5STACK_CORES3)
+#ifdef ARDUINO_M5STACK_CORES3
     unifiedButton.update(); // M5.update() よりも前に呼ぶ事
 #endif
     M5.update();
@@ -142,7 +142,7 @@ void moveRandom() {
     // ランダムモード
     int x = random(45, 135);  // 45〜135° でランダム
     int y = random(60, 90);   // 50〜90° でランダム
-#if defined( ARDUINO_M5STACK_CORES3)
+#ifdef ARDUINO_M5STACK_CORES3
     unifiedButton.update(); // M5.update() よりも前に呼ぶ事
 #endif
     M5.update();
@@ -152,6 +152,7 @@ void moveRandom() {
     int delay_time = random(10);
     moveXY(x, y, 1000 + 100 * delay_time);
     delay(2000 + 500 * delay_time);
+    avatar.setBatteryStatus(M5.Power.isCharging(), M5.Power.getBatteryLevel());
     //avatar.setSpeechText("Stop BtnC");
     avatar.setSpeechText("");
   }
@@ -172,9 +173,9 @@ void testServo() {
 }
 
 void setup() {
-  auto cfg = M5.config();
-  cfg.output_power = true;
-  M5.begin(cfg);
+  auto cfg = M5.config();     // 設定用の情報を抽出
+  cfg.output_power = true;   // Groveポートの出力をしない
+  M5.begin(cfg);              // M5Stackをcfgの設定で初期化
 #if defined( ARDUINO_M5STACK_CORES3 )
   unifiedButton.begin(&M5.Display, gob::UnifiedButton::appearance_t::transparent_all);
 #endif
@@ -185,6 +186,7 @@ void setup() {
   Serial.println("HelloWorldSerial");
   //USBSerial.println("HelloWorldUSBSerial");
 #if defined( ARDUINO_M5STACK_FIRE )
+  // M5Stack Fireの場合、Port.Aを使う場合は内部I2CをOffにする必要がある。
   M5.In_I2C.release();
 #endif
   if (servo_x.attach(SERVO_PIN_X, 
@@ -204,12 +206,13 @@ void setup() {
   setSpeedForAllServos(60);
   avatar.init();
   last_mouth_millis = millis();
+  avatar.setBatteryIcon(true);
   //moveRandom();
   //testServo();
 }
 
 void loop() {
-#if defined( ARDUINO_M5STACK_CORES3)
+#ifdef ARDUINO_M5STACK_CORES3
   unifiedButton.update(); // M5.update() よりも前に呼ぶ事
 #endif
   M5.update();
@@ -222,25 +225,14 @@ void loop() {
   }
   
   if (M5.BtnB.wasPressed()) {
-    for (int i=0; i<2; i++) {
-      avatar.setSpeechText("X 90 -> 0  ");
-      moveX(0);
-      avatar.setSpeechText("X 0 -> 180  ");
-      moveX(180);
-      avatar.setSpeechText("X 180 -> 90  ");
-      moveX(90);
-      avatar.setSpeechText("Y 90 -> 50  ");
-      moveY(50);
-      avatar.setSpeechText("Y 50 -> 90  ");
-      moveY(90);
-    }
+    testServo();
   } 
   if (M5.BtnC.pressedFor(5000)) {
-    Serial.println("Will copy this sketch to filesystem");
+    M5_LOGI("Will copy this sketch to filesystem");
     if (saveSketchToFS( SD, SDU_APP_PATH, TFCARD_CS_PIN )) {
-      Serial.println("Copy Successful!");
+      M5_LOGI("Copy Successful!");
     } else {
-      Serial.println("Copy failed!");
+      M5_LOGI("Copy failed!");
     }
   } else if (M5.BtnC.wasPressed()) {
     // ランダムモードへ
@@ -254,9 +246,9 @@ void loop() {
     delay(200);
     avatar.setMouthOpenRatio(0.0);
     last_mouth_millis = millis();
-    Serial.println("LoopSerial");
-    M5_LOGI("LoopM5LOGI");
-    //USBSerial.println("LoopUSBSerial");
+    avatar.setBatteryStatus(M5.Power.isCharging(), M5.Power.getBatteryLevel());
   }
+  // delayを50msec程度入れないとCoreS3でバッテリーレベルと充電状態がおかしくなる。
+  delay(0);
 
 }
