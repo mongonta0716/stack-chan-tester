@@ -31,7 +31,7 @@
   #define SERVO_PIN_X 18 
   #define SERVO_PIN_Y 17
   #include <gob_unifiedButton.hpp> // 2023/5/12現在 M5UnifiedにBtnA等がないのでGobさんのライブラリを使用
-  gob::UnifiedButton unifiedButton;
+  goblib::UnifiedButton unifiedButton;
 #endif
 
 int servo_offset_x = 0;  // X軸サーボのオフセット（90°からの+-で設定）
@@ -177,7 +177,7 @@ void setup() {
   cfg.output_power = true;   // Groveポートの出力をしない
   M5.begin(cfg);              // M5Stackをcfgの設定で初期化
 #if defined( ARDUINO_M5STACK_CORES3 )
-  unifiedButton.begin(&M5.Display, gob::UnifiedButton::appearance_t::transparent_all);
+  unifiedButton.begin(&M5.Display, goblib::UnifiedButton::appearance_t::transparent_all);
 #endif
   M5.Log.setLogLevel(m5::log_target_display, ESP_LOG_NONE);
   M5.Log.setLogLevel(m5::log_target_serial, ESP_LOG_INFO);
