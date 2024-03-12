@@ -32,6 +32,11 @@
   #define SERVO_PIN_Y 17
   #include <gob_unifiedButton.hpp> // 2023/5/12現在 M5UnifiedにBtnA等がないのでGobさんのライブラリを使用
   goblib::UnifiedButton unifiedButton;
+#elif defined( ARDUINO_M5STACK_DIAL )
+  // M5Stack Fireの場合はPort.A(X:G22, Y:G21)のみです。
+  // I2Cと同時利用は不可
+  #define SERVO_PIN_X 13
+  #define SERVO_PIN_Y 15
 #endif
 
 int servo_offset_x = 0;  // X軸サーボのオフセット（90°からの+-で設定）
@@ -219,13 +224,22 @@ void loop() {
   if (M5.BtnA.pressedFor(2000)) {
     // サーボのオフセットを調整するモードへ
     adjustOffset();
-  }
-  if (M5.BtnA.wasPressed()) {
+  } else if (M5.BtnA.wasPressed()) {
     moveXY(90, 90);
   }
   
-  if (M5.BtnB.wasPressed()) {
+  if (M5.BtnB.wasSingleClicked()) {
     testServo();
+  } else if (M5.BtnB.wasDoubleClicked()) {
+    if (M5.Power.getExtOutput() == true) {
+      M5.Power.setExtOutput(false);
+      avatar.setSpeechText("ExtOutput Off");
+    } else {
+      M5.Power.setExtOutput(true);
+      avatar.setSpeechText("ExtOutput On");
+    }
+    delay(2000);
+    avatar.setSpeechText(""); 
   } 
   if (M5.BtnC.pressedFor(5000)) {
     M5_LOGI("Will copy this sketch to filesystem");

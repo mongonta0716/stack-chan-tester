@@ -22,7 +22,7 @@ https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Sta
 
 # Usage
 * Button A: Rotates the X-axis and Y-axis servos to 90°. Use this button to rotate the servo 90° before fixing.
-* Button B: X-axis moves from 0 to 180, Y-axis moves from 90 to 50.
+* Button B: X-axis moves from 0 to 180, Y-axis moves from 90 to 50.<br>Double-click to toggle Grove's 5V (ExtPower) output ON/OFF; turn OFF when checking power feed from behind Stack-chan_Takao_Base.
 * Button C: Moves in random mode.
     * Button C: Stop random mode.
 * Button A long press: Enter the mode to adjust and examine the offset.

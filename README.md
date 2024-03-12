@@ -22,7 +22,7 @@ https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Sta
 
 # 使い方
 * ボタンA： X軸、Y軸のサーボを90°に回転します。固定前に90°にするときに使用してください。
-* ボタンB： X軸は0〜180, Y軸は90〜50まで動きます。
+* ボタンB： X軸は0〜180, Y軸は90〜50まで動きます。<br>ダブルクリックすると、Groveの5V(ExtPower)出力のON/OFFを切り替えます。Stack-chan_Takao_Baseの後ろから給電をチェックする場合OFFにします。
 * ボタンC： ランダムで動きます。
     * ボタンC: ランダムモードの停止
 * ボタンAの長押し：オフセットを調整して調べるモードに入ります。
