@@ -4,6 +4,8 @@
 #include <Ticker.h>
 #include <M5StackUpdater.h>
 #include <M5Unified.h>
+
+
 #if defined(ARDUINO_M5STACK_Core2)
   // M5Stack Core2用のサーボの設定
   // Port.A X:G33, Y:G32
@@ -16,6 +18,11 @@
   // I2Cと同時利用は不可
   #define SERVO_PIN_X 22
   #define SERVO_PIN_Y 21
+#if SERVO_PIN_X == 22
+  // FireでPort.Aを使う場合は内部I2CをOffにする必要がある。
+  #define CORE_PORT_A
+#endif
+
 #elif defined( ARDUINO_M5Stack_Core_ESP32 )
   // M5Stack Basic/Gray/Go用の設定
   // Port.A X:G22, Y:G21
@@ -23,13 +30,19 @@
   // スタックチャン基板 X:G5, Y:G2
   #define SERVO_PIN_X 22
   #define SERVO_PIN_Y 21
+
+#if SERVO_PIN_X == 22
+  // CoreでPort.Aを使う場合は内部I2CをOffにする必要がある。
+  #define CORE_PORT_A
+#endif
+
 #elif defined( ARDUINO_M5STACK_CORES3 )
   // M5Stack CoreS3用の設定 ※暫定的にplatformio.iniにARDUINO_M5STACK_CORES3を定義しています。
   // Port.A X:G1 Y:G2
   // Port.B X:G8 Y:G9
   // Port.C X:18 Y:17
-  #define SERVO_PIN_X 18 
-  #define SERVO_PIN_Y 17
+  #define SERVO_PIN_X 1 
+  #define SERVO_PIN_Y 2
   #include <gob_unifiedButton.hpp> // 2023/5/12現在 M5UnifiedにBtnA等がないのでGobさんのライブラリを使用
   goblib::UnifiedButton unifiedButton;
 #elif defined( ARDUINO_M5STACK_DIAL )
@@ -157,7 +170,10 @@ void moveRandom() {
     int delay_time = random(10);
     moveXY(x, y, 1000 + 100 * delay_time);
     delay(2000 + 500 * delay_time);
+#if !defined( CORE_PORT_A )
+    // Basic/M5Stack Fireの場合はバッテリー情報が取得できないので表示しない
     avatar.setBatteryStatus(M5.Power.isCharging(), M5.Power.getBatteryLevel());
+#endif
     //avatar.setSpeechText("Stop BtnC");
     avatar.setSpeechText("");
   }
@@ -190,9 +206,13 @@ void setup() {
   M5_LOGI("Hello World");
   Serial.println("HelloWorldSerial");
   //USBSerial.println("HelloWorldUSBSerial");
-#if defined( ARDUINO_M5STACK_FIRE )
+  avatar.init();
+#if defined( CORE_PORT_A )
   // M5Stack Fireの場合、Port.Aを使う場合は内部I2CをOffにする必要がある。
+  avatar.setBatteryIcon(false);
   M5.In_I2C.release();
+#else
+  avatar.setBatteryIcon(true);
 #endif
   if (servo_x.attach(SERVO_PIN_X, 
                      START_DEGREE_VALUE_X + servo_offset_x,
@@ -209,9 +229,7 @@ void setup() {
   servo_x.setEasingType(EASE_QUADRATIC_IN_OUT);
   servo_y.setEasingType(EASE_QUADRATIC_IN_OUT);
   setSpeedForAllServos(60);
-  avatar.init();
   last_mouth_millis = millis();
-  avatar.setBatteryIcon(true);
   //moveRandom();
   //testServo();
 }
@@ -260,7 +278,9 @@ void loop() {
     delay(200);
     avatar.setMouthOpenRatio(0.0);
     last_mouth_millis = millis();
+#if !defined( CORE_PORT_A )
     avatar.setBatteryStatus(M5.Power.isCharging(), M5.Power.getBatteryLevel());
+#endif
   }
   // delayを50msec程度入れないとCoreS3でバッテリーレベルと充電状態がおかしくなる。
   delay(0);
