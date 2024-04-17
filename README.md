@@ -18,10 +18,17 @@ https://github.com/mongonta0716/stack-chan-tester/blob/main/src/main.cpp#L7-L35
 SG90系のPWMサーボは個体差が多く、90°を指定しても少しずれる場合があります。その場合は下記のオフセット値を調整してください。(90°からの角度（±）を設定します。)
 調整する値は、ボタンAの長押しでオフセットを調整するモードに入るので真っ直ぐになる数値を調べてください。
 
-https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Stackchan_tester.ino#L27-L28
+オフセットの調整方法はおきもくさんの[スタックチャンの作り方　M5Burner版　分解なし【後半】](https://www.youtube.com/watch?v=YRQYYrQh0oE&t=329s)を参照してください。
+
+調整後の値の設定方法については、書き込むファームウェアによって変わります。
+
+- ソース内の初期値を書き換えるもの。<br>初期設定で90を指定している箇所を書き換えて再ビルドします。
+- 設定ファイルを書き換えるもの。<br>[stackchan-bluetooth-simple](https://github.com/mongonta0716/stackchan-bluetooth-simple)は設定ファイルでオフセットを指定します。
+- Webで設定するもの。<br>NoRiさんの[WebServer-with-stackchan](https://github.com/NoRi-230401/WebServer-with-stackchan)はWebで設定する機能があります。
+
 
 # 使い方
-* ボタンA： X軸、Y軸のサーボを90°に回転します。固定前に90°にするときに使用してください。
+* ボタンA： X軸、Y軸のサーボを90°にします。固定前に90°にするときに使用してください。（90°の位置はPWMサーボによって若干異なるためオフセット値の調整値を調べる必要があります。）
 * ボタンB： X軸は0〜180, Y軸は90〜50まで動きます。<br>ダブルクリックすると、Groveの5V(ExtPower)出力のON/OFFを切り替えます。Stack-chan_Takao_Baseの後ろから給電をチェックする場合OFFにします。
 * ボタンC： ランダムで動きます。
     * ボタンC: ランダムモードの停止
@@ -30,6 +37,8 @@ https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Sta
     * ボタンB: X軸とY軸の切り替え
     * ボタンC: オフセットを増やす
     * ボタンB長押し: 調整モードの終了
+
+
 
 ## CoreS3のボタン操作
 CoreS3はCore2のBtnA、B、Cの部分がカメラやマイクに変わってしまったためボタンの扱いが変わりました。<br>

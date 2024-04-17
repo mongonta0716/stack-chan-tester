@@ -15,10 +15,17 @@ CoreS3 uses Port.C(G18,G17), Core2 uses Port.C(G13,G14), Fire uses Port.A(G22,G2
 https://github.com/mongonta0716/stack-chan-tester/blob/main/src/main.cpp#L7-L35
 
 # Adjustment of servo offset
-There are many individual differences among SG90 series PWM servos, and even if 90° is specified, the servo may shift a little. In this case, please adjust the following offset value. (Set the angle (±) from 90°.)
+
+PWM servos of the SG90 series have many individual differences, and even if 90° is specified, the servo may shift slightly. In this case, please adjust the offset value below. (Set the angle (±) from 90°.)
 For the value to be adjusted, press and hold button A to enter the mode to adjust the offset, and find out the value that makes it straight.
 
-https://github.com/mongonta0716/stack-chan-tester/blob/main/Stackchan_tester/Stackchan_tester.ino#L27-L28
+Please refer to Okimoku's [How to make a stack chan M5Burner version without disassembly [second half]](https://www.youtube.com/watch?v=YRQYYrQh0oE&t=329s) for how to adjust the offset.(Japanese)
+
+The method of setting the adjusted value depends on the firmware to be written.
+
+- The one that rewrites the initial value in the source. <br>Rewrite the part where 90 is specified in the initial settings and rebuild.
+- Rewriting the configuration file. <br>[stackchan-bluetooth-simple](https://github.com/mongonta0716/stackchan-bluetooth-simple) specifies the offset in the configuration file.
+- The one to be configured on the web. <br>NoRi's [WebServer-with-stackchan](https://github.com/NoRi-230401/WebServer-with-stackchan) has the ability to configure on the web.
 
 # Usage
 * Button A: Rotates the X-axis and Y-axis servos to 90°. Use this button to rotate the servo 90° before fixing.
