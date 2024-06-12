@@ -41,8 +41,8 @@
   // Port.A X:G1 Y:G2
   // Port.B X:G8 Y:G9
   // Port.C X:18 Y:17
-  #define SERVO_PIN_X 1 
-  #define SERVO_PIN_Y 2
+  #define SERVO_PIN_X 18 
+  #define SERVO_PIN_Y 17
   #include <gob_unifiedButton.hpp> // 2023/5/12現在 M5UnifiedにBtnA等がないのでGobさんのライブラリを使用
   goblib::UnifiedButton unifiedButton;
 #elif defined( ARDUINO_M5STACK_DIAL )
@@ -50,6 +50,11 @@
   // I2Cと同時利用は不可
   #define SERVO_PIN_X 13
   #define SERVO_PIN_Y 15
+#elif defined( ARDUINO_M5STACK_VAMETER )
+  // M5Stack Fireの場合はPort.A(X:G22, Y:G21)のみです。
+  // I2Cと同時利用は不可
+  #define SERVO_PIN_X 9
+  #define SERVO_PIN_Y 10
 #endif
 
 int servo_offset_x = 0;  // X軸サーボのオフセット（90°からの+-で設定）
@@ -62,8 +67,8 @@ int servo_offset_y = 0;  // Y軸サーボのオフセット（90°からの+-で
 using namespace m5avatar;
 Avatar avatar;
 
-#define START_DEGREE_VALUE_X 90
-#define START_DEGREE_VALUE_Y 90
+#define START_DEGREE_VALUE_X 60
+#define START_DEGREE_VALUE_Y 60
 
 #define SDU_APP_PATH "/stackchan_tester.bin"
 #define TFCARD_CS_PIN 4
@@ -110,7 +115,7 @@ void adjustOffset() {
   // サーボのオフセットを調整するモード
   servo_offset_x = 0;
   servo_offset_y = 0;
-  moveXY(90, 90);
+  moveXY(60, 60);
   bool adjustX = true;
   for (;;) {
 #ifdef ARDUINO_M5STACK_CORES3
@@ -141,7 +146,7 @@ void adjustOffset() {
         servo_offset_y++;
       }
     }
-    moveXY(90, 90);
+    moveXY(60, 60);
 
     std::string s;
 
@@ -158,8 +163,8 @@ void adjustOffset() {
 void moveRandom() {
   for (;;) {
     // ランダムモード
-    int x = random(45, 135);  // 45〜135° でランダム
-    int y = random(60, 90);   // 50〜90° でランダム
+    int x = random(15, 105);  // 45〜135° でランダム
+    int y = random(START_DEGREE_VALUE_Y, 90);   // 50〜90° でランダム
 #ifdef ARDUINO_M5STACK_CORES3
     unifiedButton.update(); // M5.update() よりも前に呼ぶ事
 #endif
@@ -183,13 +188,13 @@ void testServo() {
     avatar.setSpeechText("X 90 -> 0  ");
     moveX(0);
     avatar.setSpeechText("X 0 -> 180  ");
-    moveX(180);
+    moveX(120);
     avatar.setSpeechText("X 180 -> 90  ");
-    moveX(90);
+    moveX(START_DEGREE_VALUE_X);
     avatar.setSpeechText("Y 90 -> 50  ");
-    moveY(50);
-    avatar.setSpeechText("Y 50 -> 90  ");
     moveY(90);
+    avatar.setSpeechText("Y 50 -> 90  ");
+    moveY(START_DEGREE_VALUE_Y);
   }
 }
 
@@ -206,6 +211,12 @@ void setup() {
   M5_LOGI("Hello World");
   Serial.println("HelloWorldSerial");
   //USBSerial.println("HelloWorldUSBSerial");
+  switch(M5.getBoard()) {
+    case m5::board_t::board_M5VAMeter:
+      M5.Display.setRotation(2);
+      avatar.setPosition(0, -40);
+      break;
+  }
   avatar.init();
 #if defined( CORE_PORT_A )
   // M5Stack Fireの場合、Port.Aを使う場合は内部I2CをOffにする必要がある。
@@ -230,8 +241,9 @@ void setup() {
   servo_y.setEasingType(EASE_QUADRATIC_IN_OUT);
   setSpeedForAllServos(60);
   last_mouth_millis = millis();
+  testServo();
   //moveRandom();
-  //testServo();
+
 }
 
 void loop() {
@@ -243,11 +255,12 @@ void loop() {
     // サーボのオフセットを調整するモードへ
     adjustOffset();
   } else if (M5.BtnA.wasPressed()) {
-    moveXY(90, 90);
+    moveXY(START_DEGREE_VALUE_X, START_DEGREE_VALUE_Y);
   }
   
   if (M5.BtnB.wasSingleClicked()) {
     testServo();
+    moveRandom();
   } else if (M5.BtnB.wasDoubleClicked()) {
     if (M5.Power.getExtOutput() == true) {
       M5.Power.setExtOutput(false);
@@ -271,17 +284,17 @@ void loop() {
     moveRandom();
   }
 
-  if ((millis() - last_mouth_millis) > mouth_wait) {
-    const char* l = lyrics[lyrics_idx++ % lyrics_size];
-    avatar.setSpeechText(l);
-    avatar.setMouthOpenRatio(0.7);
-    delay(200);
-    avatar.setMouthOpenRatio(0.0);
-    last_mouth_millis = millis();
-#if !defined( CORE_PORT_A )
-    avatar.setBatteryStatus(M5.Power.isCharging(), M5.Power.getBatteryLevel());
-#endif
-  }
+//  if ((millis() - last_mouth_millis) > mouth_wait) {
+    //const char* l = lyrics[lyrics_idx++ % lyrics_size];
+    //avatar.setSpeechText(l);
+    //avatar.setMouthOpenRatio(0.7);
+    //delay(200);
+    //avatar.setMouthOpenRatio(0.0);
+    //last_mouth_millis = millis();
+//#if !defined( CORE_PORT_A )
+    //avatar.setBatteryStatus(M5.Power.isCharging(), M5.Power.getBatteryLevel());
+//#endif
+  //}
   // delayを50msec程度入れないとCoreS3でバッテリーレベルと充電状態がおかしくなる。
   delay(0);
 
