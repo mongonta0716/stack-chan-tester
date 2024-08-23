@@ -10,9 +10,13 @@ stack-chan test application for pwm servo
 
 ※ ArduinoFramework及びPWMサーボのみです。
 
-# サーボのピンの設定
-CoreS3はPort.C(G18, G17)、Core2はPort.C(G13,G14)、Fireは Port.A(G22,G21)、Core1は Port.C(G16,G17)を使うようになっています。違うピンを使用する場合は下記の箇所を書き換えてください。
-https://github.com/mongonta0716/stack-chan-tester/blob/main/src/main.cpp#L7-L35
+# デフォルト設定
+SDカードに/yaml/SC_BasicConfig.yamlという名前のファイルを置くことにより、PWMサーボ以外にも対応可能です。
+
+デフォルト値はPWMサーボ向けになっています。(SG90)
+
+CoreS3はPort.A(G1, G2)、Core2はPort.A(G33,G34)、Core1は Port.A(G22,G21)を使うようになっています。違うピンを使用する場合はSDカードに設定ファイルをおいて変更してください。
+
 
 # サーボのオフセット調整
 SG90系のPWMサーボは個体差が多く、90°を指定しても少しずれる場合があります。その場合は下記のオフセット値を調整してください。(90°からの角度（±）を設定します。)
@@ -60,9 +64,9 @@ ArduinoIDEでの詳しいライブラリの追加方法は下記のブログを�
 　v0.1はArduinoIDEでしたが、現在はPlatformIOでのビルドを想定しています。
 
 # ｽﾀｯｸﾁｬﾝについて
-ｽﾀｯｸﾁｬﾝは[ししかわさん](https://github.com/meganetaaan)が公開しているオープンソースのプロジェクトです。
+ｽﾀｯｸﾁｬﾝは[ししかわさん](https://github.com/stack-chan)が公開しているオープンソースのプロジェクトです。
 
-https://github.com/meganetaaan/stack-chan
+https://github.com/stack-chan/stack-chan
 
 # author
  Takao Akaki

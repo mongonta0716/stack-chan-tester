@@ -1,0 +1,58 @@
+servo: 
+  pin: 
+    # ServoPin
+    # Core1 PortA X:22,Y:21 PortC X:16,Y:17
+    # Core2 PortA X:33,Y:32 PortC X:13,Y:14
+    # Stack-chanPCB Core1 X:5,Y:2 Core2 X:19,Y27
+    # When using SCS0009, x:RX, y:TX (not used).(StackchanRT Version:Core1 x16,y17, Core2: x13,y14)
+    x: 13 
+    y: 14
+  offset: 
+    # Specified by +- from 90 degree during servo initialization
+    x: 0
+    y: 0
+  center:
+    x: 150
+    y: 150
+  lower_limit:
+    x: 0
+    y: 150
+  upper_limit:
+    x: 300
+    y: 120
+  speed: 
+    normal_mode: 
+      interval_min: 3000
+      interval_max: 6000
+      move_min: 500
+      move_max: 1500
+    sing_mode: 
+      interval_min: 500
+      interval_max: 1000
+      move_min: 500
+      move_max: 1000
+bluetooth: 
+  device_name: "M5Stack"
+  starting_state: false
+  start_volume: 100
+auto_power_off_time: 0 # Core2 Only. time(msec) of auto power off(0 is disable.)
+balloon: 
+  font_language: "CN" # "JA or CN or Default"
+  lyrics: # A maximum of 10 can be specified.
+  - "こんにちは"
+  - "Hello"
+  - "Bonjour"
+  - "你好"
+  - "私はスタックチャン"
+  - "我是Stack-chan"
+  - "I'm Stack-chan"
+  - "Je suis Stack-chan"
+led_lr: 0 # 0:stereo, 1:left_only, 2:right_only
+led_pin: 15 # GoBottom1:15 GoBottom2:25
+takao_base: false # Whether to use takaobase to feed power from the rear connector.(Stack-chan_Takao_Base  https://ssci.to/8905)
+servo_type: "SCS" # "PWM": SG90PWMServo, "SCS": Feetech SCS0009, "Dynamixel": Dynamixel XL330
+extend_config_filename: ""     # Configuration file for the application.
+extend_config_filesize: 2048                         # Buffer size for feature extensions
+secret_config_filename: ""    # Configuration file for the File for personal information.
+secret_config_filesize: 2048                         # Buffer size for personal information.
+secret_info_show: true                               # Whether personal information is output to the log or not.
