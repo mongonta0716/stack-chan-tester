@@ -1,25 +1,26 @@
 servo: 
   pin: 
     # ServoPin
-    # Core1 PortA X:22,Y:21 PortC X:16,Y:17
-    # Core2 PortA X:33,Y:32 PortC X:13,Y:14
+    # Core1  PortA X:22,Y:21               PortC X:16,Y:17
+    # Core2  PortA X:33,Y:32               PortC X:13,Y:14
+    # CoreS3 PortA X:1,Y:2   PortB X:8,Y:9 PortC X:18,Y:17
     # Stack-chanPCB Core1 X:5,Y:2 Core2 X:19,Y27
-    # When using SCS0009, x:RX, y:TX (not used).(StackchanRT Version:Core1 x16,y17, Core2: x13,y14)
-    x: 13 
-    y: 14
+    # When using SCS0009, x:RX, y:TX (TX not used).(StackchanRT Version:Core1 x16,y17, Core2: x13,y14)
+    x: 18
+    y: 17
   offset: 
     # Specified by +- from 90 degree during servo initialization
     x: 0
     y: 0
   center:
-    x: 150
-    y: 150
+    x: 180
+    y: 270
   lower_limit:
     x: 0
-    y: 150
+    y: 240
   upper_limit:
-    x: 300
-    y: 120
+    x: 360
+    y: 280
   speed: 
     normal_mode: 
       interval_min: 3000
@@ -50,7 +51,7 @@ balloon:
 led_lr: 0 # 0:stereo, 1:left_only, 2:right_only
 led_pin: 15 # GoBottom1:15 GoBottom2:25
 takao_base: false # Whether to use takaobase to feed power from the rear connector.(Stack-chan_Takao_Base  https://ssci.to/8905)
-servo_type: "SCS" # "PWM": SG90PWMServo, "SCS": Feetech SCS0009, "Dynamixel": Dynamixel XL330
+servo_type: "DYN_XL330" # "PWM": SG90PWMServo, "SCS": Feetech SCS0009, "DYN_XL330": Dynamixel XL330
 extend_config_filename: ""     # Configuration file for the application.
 extend_config_filesize: 2048                         # Buffer size for feature extensions
 secret_config_filename: ""    # Configuration file for the File for personal information.
