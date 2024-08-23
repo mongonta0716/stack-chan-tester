@@ -5,7 +5,7 @@ servo:
     # Core2  PortA X:33,Y:32               PortC X:13,Y:14
     # CoreS3 PortA X:1,Y:2   PortB X:8,Y:9 PortC X:18,Y:17
     # Stack-chanPCB Core1 X:5,Y:2 Core2 X:19,Y27
-    # When using SCS0009, x:RX, y:TX (TX not used).(StackchanRT Version:Core1 x16,y17, Core2: x13,y14)
+    # When using SCS0009, x:RX, y:TX (TX not used)
     x: 18
     y: 17
   offset: 
@@ -13,12 +13,21 @@ servo:
     x: 0
     y: 0
   center:
+    # SG90 X:90, Y:90
+    # SCS0009 X:150, Y:150
+    # Dynamixel X:180, Y:270
     x: 180
     y: 270
   lower_limit:
+    # SG90            X:0, Y:60
+    # Feetech SCS0009 X:0, Y:120
+    # Dynamixel XL330 X:0, Y:240
     x: 0
     y: 240
   upper_limit:
+    # SG90            X:180, Y:100
+    # Feetech SCS0009 X:300, Y:160
+    # Dynamixel XL330 X:360, Y:280
     x: 360
     y: 280
   speed: 
