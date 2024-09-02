@@ -123,6 +123,13 @@ void testServo() {
   }
 }
 
+void mumumuServo() {
+  for (int i=0; i<30; i++) {
+    servo.moveX(120, 250);
+    servo.moveX(240, 250);
+  }
+}
+
 void setup() {
   auto cfg = M5.config();     // 設定用の情報を抽出
   //cfg.output_power = true;    // Groveポートの5V出力をする／しない（TakaoBase用）
@@ -171,6 +178,7 @@ void loop() {
     // サーボのオフセットを調整するモードへ
     adjustOffset();
   } else if (M5.BtnA.wasPressed()) {
+    // 初期位置へ戻ります。
     servo.moveXY(system_config.getServoInfo(AXIS_X)->start_degree, system_config.getServoInfo(AXIS_Y)->start_degree, 2000);
   }
   
@@ -196,7 +204,8 @@ void loop() {
     }
   } else if (M5.BtnC.wasPressed()) {
     // ランダムモードへ
-    moveRandom();
+    //mumumuServo(); // 左右に高速で首を振ります。（サーボが壊れるのであまり使わないでください。）
+    moveRandom(); // ランダムモードになります。
   }
 
   if ((millis() - last_mouth_millis) > mouth_wait) {
