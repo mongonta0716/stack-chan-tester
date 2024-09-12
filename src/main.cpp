@@ -7,8 +7,10 @@
 #include <M5Unified.h>
 #include <Stackchan_system_config.h>
 #include <Stackchan_servo.h>
+#ifdef ARDUINO_M5STACK_CORES3
 #include <gob_unifiedButton.hpp>
 goblib::UnifiedButton unifiedButton;
+#endif
 
 int servo_offset_x = 0;  // X軸サーボのオフセット（サーボの初期位置からの+-で設定）
 int servo_offset_y = 0;  // Y軸サーボのオフセット（サーボの初期位置からの+-で設定）
@@ -43,7 +45,9 @@ void adjustOffset() {
   servo.moveXY(system_config.getServoInfo(AXIS_X)->start_degree, system_config.getServoInfo(AXIS_Y)->start_degree, 2000);
   bool adjustX = true;
   for (;;) {
+#ifdef ARDUINO_M5STACK_CORES3
     unifiedButton.update(); // M5.update() よりも前に呼ぶ事
+#endif
     M5.update();
     if (M5.BtnA.wasPressed()) {
       // オフセットを減らす
@@ -134,7 +138,9 @@ void setup() {
   auto cfg = M5.config();     // 設定用の情報を抽出
   //cfg.output_power = true;    // Groveポートの5V出力をする／しない（TakaoBase用）
   M5.begin(cfg);              // M5Stackをcfgの設定で初期化
+#ifdef ARDUINO_M5STACK_CORES3
   unifiedButton.begin(&M5.Display, goblib::UnifiedButton::appearance_t::transparent_all);
+#endif
   M5.Log.setLogLevel(m5::log_target_display, ESP_LOG_NONE);
   M5.Log.setLogLevel(m5::log_target_serial, ESP_LOG_INFO);
   M5.Log.setEnableColor(m5::log_target_serial, false);
@@ -143,6 +149,16 @@ void setup() {
   delay(2000);
  
   system_config.loadConfig(SD, ""); 
+  if (M5.getBoard() == m5::board_t::board_M5Stack) {
+    if (system_config.getServoInfo(AXIS_X)->pin == 22) {
+      // M5Stack Coreの場合、Port.Aを使う場合は内部I2CをOffにする必要がある。バッテリー表示は不可。
+      avatar.setBatteryIcon(false);
+      M5.In_I2C.release();
+      core_port_a = true;
+    }
+  } else {
+    avatar.setBatteryIcon(true);
+  }
   // servo
   servo.begin(system_config.getServoInfo(AXIS_X)->pin, system_config.getServoInfo(AXIS_X)->start_degree,
               system_config.getServoInfo(AXIS_X)->offset,
@@ -155,16 +171,6 @@ void setup() {
   M5_LOGI("ServoType: %d\n", system_config.getServoType());
   //USBSerial.println("HelloWorldUSBSerial");
   avatar.init();
-  if (M5.getBoard() == m5::board_t::board_M5Stack) {
-    if (system_config.getServoInfo(AXIS_X)->pin == 22) {
-      // M5Stack Coreの場合、Port.Aを使う場合は内部I2CをOffにする必要がある。バッテリー表示は不可。
-      avatar.setBatteryIcon(false);
-      M5.In_I2C.release();
-      core_port_a = true;
-    }
-  } else {
-    avatar.setBatteryIcon(true);
-  }
   
   last_mouth_millis = millis();
   //moveRandom();
@@ -172,7 +178,9 @@ void setup() {
 }
 
 void loop() {
+#ifdef ARDUINO_M5STACK_CORES3
   unifiedButton.update(); // M5.update() よりも前に呼ぶ事
+#endif
   M5.update();
   if (M5.BtnA.pressedFor(2000)) {
     // サーボのオフセットを調整するモードへ
