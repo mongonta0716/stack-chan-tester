@@ -99,8 +99,8 @@ void moveRandom() {
     if (M5.BtnC.wasPressed()) {
       break;
     }
-    int delay_time = random(20);
-    servo.moveXY(x, y, 1000 + 500 * delay_time);
+    int delay_time = random(10);
+    servo.moveXY(x, y, 1000 + 100 * delay_time);
     delay(2000 + 500 * delay_time);
     if (!core_port_a) {
       // Basic/M5Stack Fireの場合はバッテリー情報が取得できないので表示しない
