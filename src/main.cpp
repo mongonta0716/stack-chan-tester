@@ -21,8 +21,6 @@ int servo_offset_y = 0;  // Y軸サーボのオフセット（サーボの初期
 using namespace m5avatar;
 Avatar avatar;
 
-#define START_DEGREE_VALUE_X 90
-#define START_DEGREE_VALUE_Y 90
 
 #define SDU_APP_PATH "/stackchan_tester.bin"
 #define TFCARD_CS_PIN 4
@@ -99,8 +97,12 @@ void moveRandom() {
     if (M5.BtnC.wasPressed()) {
       break;
     }
+    uint16_t base_delay_time = 0;
+    if (system_config.getServoType() == ServoType::SCS || system_config.getServoType() == ServoType::DYN_XL330) {
+      base_delay_time = 500;
+    }
     int delay_time = random(10);
-    servo.moveXY(x, y, 1000 + 100 * delay_time);
+    servo.moveXY(x, y, 1000 + (100 + base_delay_time) * delay_time);
     delay(2000 + 500 * delay_time);
     if (!core_port_a) {
       // Basic/M5Stack Fireの場合はバッテリー情報が取得できないので表示しない
@@ -150,6 +152,7 @@ void setup() {
  
   system_config.loadConfig(SD, ""); 
   if (M5.getBoard() == m5::board_t::board_M5Stack) {
+    M5_LOGI("I2CRelease");
     if (system_config.getServoInfo(AXIS_X)->pin == 22) {
       // M5Stack Coreの場合、Port.Aを使う場合は内部I2CをOffにする必要がある。バッテリー表示は不可。
       avatar.setBatteryIcon(false);
@@ -159,6 +162,7 @@ void setup() {
   } else {
     avatar.setBatteryIcon(true);
   }
+  M5_LOGI("attach servo");
   // servo
   servo.begin(system_config.getServoInfo(AXIS_X)->pin, system_config.getServoInfo(AXIS_X)->start_degree,
               system_config.getServoInfo(AXIS_X)->offset,
