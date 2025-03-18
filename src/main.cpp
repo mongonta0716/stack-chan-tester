@@ -33,6 +33,7 @@ int servo_offset_y = 0;  // Y軸サーボのオフセット（サーボの初期
 
 using namespace m5avatar;     // (Avatar.h)avatarのnamespaceを使う宣言（こうするとm5avatar::???と書かなくて済む。)
 Avatar avatar;                // (Avatar.h)avatarのクラスを定義
+ColorPalette *cps[2];
 
 #define SDU_APP_PATH "/stackchan_tester.bin"  // (SDUpdater.h)SDUpdaterで使用する変数
 #define TFCARD_CS_PIN 4                       // SDカードスロットのCSPIN番号
@@ -174,6 +175,7 @@ void mumumuServo() {
 // void setup()は、最初に1回だけ実行します。
 void setup() {
   auto cfg = M5.config();       // 設定用の情報を抽出
+  cfg.serial_baudrate = 115200;
   M5.begin(cfg);                // M5Stackをcfgの設定で初期化
 #ifdef ARDUINO_M5STACK_CORES3 // CORES3のときに有効になります。
   // 画面上のタッチパネルを3分割してBtnA, B, Cとして使う設定。
@@ -212,7 +214,11 @@ void setup() {
   M5_LOGI("ServoType: %d\n", system_config.getServoType());      // サーボのタイプをログに出力
   //USBSerial.println("HelloWorldUSBSerial");
   avatar.init();                   // avatarを初期化して実行開始します。(このときに顔が表示されます。)
-  
+  cps[0] = new ColorPalette();
+  cps[0]->set(COLOR_PRIMARY, TFT_BLACK);
+  cps[0]->set(COLOR_BACKGROUND, TFT_WHITE);
+  avatar.setColorPalette(*cps[0]);
+
   last_mouth_millis = millis();    // loop内で使用するのですが、処理を止めずにタイマーを実行するための変数です。一定時間で口を開くのとセリフを切り替えるのに利用します。
   //moveRandom();
   //testServo();
