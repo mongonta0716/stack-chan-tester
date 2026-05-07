@@ -194,7 +194,7 @@ void setup() {
               system_config.getServoInfo(AXIS_X)->offset,
               system_config.getServoInfo(AXIS_Y)->pin, system_config.getServoInfo(AXIS_Y)->start_degree,
               system_config.getServoInfo(AXIS_Y)->offset,
-              (ServoType)system_config.getServoType());
+              (ServoType)system_config.getServoType(), &M5.In_I2C);
 
   M5.Power.setExtOutput(!system_config.getUseTakaoBase());       // 設定ファイルのTakaoBaseがtrueの場合は、Groveポートの5V出力をONにする。
 
@@ -202,8 +202,8 @@ void setup() {
   //USBSerial.println("HelloWorldUSBSerial");
   avatar.init();                   // avatarを初期化して実行開始します。(このときに顔が表示されます。)
   cps[0] = new ColorPalette();
-  cps[0]->set(COLOR_PRIMARY, TFT_BLACK);
-  cps[0]->set(COLOR_BACKGROUND, TFT_WHITE);
+  cps[0]->set(COLOR_PRIMARY, TFT_WHITE);
+  cps[0]->set(COLOR_BACKGROUND, TFT_BLACK);
   avatar.setColorPalette(*cps[0]);
 
   last_mouth_millis = millis();    // loop内で使用するのですが、処理を止めずにタイマーを実行するための変数です。一定時間で口を開くのとセリフを切り替えるのに利用します。
